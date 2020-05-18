@@ -36,3 +36,13 @@ public:
         return Sum::GetSum();
     }
 };
+
+// 方法二: 递归+短路求值原理
+class Solution {
+public:
+    int Sum_Solution(int n) {
+        int res = n;
+        res && (res += Sum_Solution(n - 1));
+        return res;
+    }
+};
