@@ -6,6 +6,7 @@
 
 #include<iostream>
 #include<string>
+#include<algorithm>
 using namespace std;
 
 int main()
@@ -25,6 +26,7 @@ int main()
 		res += range[M % N];
 		M /= N;
 	}
+	reverse(res.begin(), res.end()); //逆置字符串
 	cout << res << endl;
 	return 0;
 }
