@@ -1,0 +1,153 @@
+#include<iostream>
+using namespace std;
+#include<vector>
+
+template<typename T, typename Container = vector<T>, typename Com = less<T>>
+class mypriority_queue
+{
+public:
+	mypriority_queue()
+	{}
+
+	template<typename Iterator>
+	mypriority_queue(Iterator first, Iterator last)
+		:_con(first, last)
+	{
+		for (int pos = (_con.size() - 2) / 2; root >= 0; root--)
+		{
+			Adjustdown(pos);
+		}
+	}
+	
+	void push(const T& data)
+	{
+		_con.push_back(data);
+		int child = _con.size() - 1;
+		int parent = (child - 1) / 2;
+
+		Com com;
+		while (child)
+		{
+			if (com(_con[parent], _con[child]))
+			{
+				swap(_con[parent], _con[child]);
+				child = parent;
+				parent = (child - 1) / 2;
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
+
+	void pop()
+	{
+		if (empty())
+		{
+			return;
+		}
+
+		swap(_con[0], _con[size() - 1]);
+		_con.pop_back();
+		Adjustdown(0);
+	}
+
+	size_t size() const
+	{
+		return _con.size();
+	}
+
+	bool empty() const
+	{
+		return _con.empty();
+	}
+
+	const T& top() const
+	{
+		return _con.front();
+	}
+
+private:
+	void Adjustdown(int parent)
+	{
+		int size = _con.size();
+		int child = parent * 2 + 1;
+		
+		Com com;
+		while (child < size)
+		{
+			if (child + 1 < size && com(_con[child], _con[child + 1]))
+			{
+				child++;
+			}
+			if (com(_con[parent], _con[child]))
+			{
+				swap(_con[parent], _con[child]);
+				parent = child;
+				child = parent * 2 + 1;
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
+private:
+	Container _con;
+};
+
+void test1()
+{
+	mypriority_queue<int> q;
+	q.push(5);
+	q.push(1);
+	q.push(6);
+	q.push(0);
+	q.push(2);
+	q.push(4);
+	q.push(3);
+
+	cout << q.size() << endl;
+	cout << q.top() << endl;
+
+	q.pop();
+	cout << q.top() << endl;
+}
+
+
+//仿函数(函数对象),实现原理:在类中将()重载,   ()--函数调用运算符
+template<typename T>
+class Greater
+{
+public:
+	bool operator()(const T& left, const T& right)
+	{
+		return left > right;
+	}
+};
+
+void test2()
+{
+	mypriority_queue<int, vector<int>, Greater<int>> q;
+	q.push(5);
+	q.push(1);
+	q.push(6);
+	q.push(0);
+	q.push(2);
+	q.push(4);
+	q.push(3);
+
+	cout << q.size() << endl;
+	cout << q.top() << endl;
+
+	q.pop();
+	cout << q.top() << endl;
+}
+
+int main()
+{
+	//test1();
+	test2();
+	return 0;
+}
